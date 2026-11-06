@@ -226,6 +226,7 @@ export class DebugConsolePlusViewProvider implements vscode.WebviewViewProvider 
           timestampMode: this.timestampMode,
           autoHideTimestampsWidth: this.autoHideTimestampsWidth,
           showLogSource: config.get<boolean>('showLogSource', false),
+          showLogLevel: config.get<boolean>('showLogLevel', true),
           defaultLevels: defaultLevels,
         },
       } as WebviewMessage);
@@ -248,9 +249,17 @@ export class DebugConsolePlusViewProvider implements vscode.WebviewViewProvider 
   }
 
   public toggleLogSource() {
+    this.toggleSetting('showLogSource', false);
+  }
+
+  public toggleLogLevel() {
+    this.toggleSetting('showLogLevel', true);
+  }
+
+  private toggleSetting(key: string, defaultValue: boolean) {
     const config = vscode.workspace.getConfiguration('debugConsolePlus');
     // Webview picks the change up through onDidChangeConfiguration -> sendConfig
-    void config.update('showLogSource', !config.get<boolean>('showLogSource', false), vscode.ConfigurationTarget.Global);
+    void config.update(key, !config.get<boolean>(key, defaultValue), vscode.ConfigurationTarget.Global);
   }
 
   public toggleCompact() {

@@ -9,7 +9,8 @@
   let timestampMode = 'absolute'; // 'absolute' | 'relative' | 'hidden'
   let launchTimestamp = null; // timestamp of the first log entry
   let autoHideTimestampsWidth = 200;
-  let showLogSource = false; // true = source column replaces the timestamp column
+  let showLogSource = false;
+  let showLogLevel = true;
   let shouldAutoScroll = true;
   let contextMenuTargetIndex = -1;
   let compactMessages = false;
@@ -344,11 +345,12 @@
           timestampMode = message.config.timestampMode || 'absolute';
           autoHideTimestampsWidth = message.config.autoHideTimestampsWidth || 200;
           showLogSource = !!message.config.showLogSource;
+          showLogLevel = message.config.showLogLevel !== false;
           if (message.config.defaultLevels) {
             activeLevels = new Set(message.config.defaultLevels);
             updateLevelButtons();
           }
-          updateTimestampVisibility();
+          updateColumnVisibility();
           updateResponsiveTimestampHide();
           itemHeights.clear();
           applyFilters();
@@ -588,18 +590,19 @@
 
   function updateResponsiveTimestampHide() {
     if (containerWidth < autoHideTimestampsWidth) {
-      document.body.classList.add('hide-timestamps-responsive');
+      document.body.classList.add('hide-columns-responsive');
     } else {
-      document.body.classList.remove('hide-timestamps-responsive');
+      document.body.classList.remove('hide-columns-responsive');
     }
   }
 
-  function isFirstColumnVisible() {
-    return showLogSource || timestampMode !== 'hidden';
+  /** Timestamp, source and level columns are toggled independently. */
+  function hasColumns() {
+    return timestampMode !== 'hidden' || showLogSource || showLogLevel;
   }
 
-  function updateTimestampVisibility() {
-    document.body.classList.toggle('hide-timestamps', !isFirstColumnVisible());
+  function updateColumnVisibility() {
+    document.body.classList.toggle('hide-columns', !hasColumns());
   }
 
   function getSourceText(log) {
@@ -634,12 +637,12 @@
   }
 
   function formatLogForCopy(log) {
-    if (showLogSource) return `${getSourceText(log)} ${log.message}`;
-    if (timestampMode === 'hidden') return log.message;
-    const ts = timestampMode === 'relative'
-      ? formatRelativeTimestamp(log.timestamp)
-      : log.formattedTimestamp;
-    return `${ts} ${log.level.toUpperCase()} ${log.message}`;
+    const parts = [];
+    if (timestampMode !== 'hidden') parts.push(getTimestampText(log));
+    if (showLogSource) parts.push(getSourceText(log));
+    if (showLogLevel) parts.push(log.level.toUpperCase());
+    parts.push(log.message);
+    return parts.join(' ');
   }
 
   function handleCopyAll() {
@@ -944,17 +947,21 @@
     entry.className = `log-entry ${log.level}`;
     entry.dataset.logIndex = index;
 
+    if (timestampMode !== 'hidden') {
+      const ts = document.createElement('span');
+      ts.className = 'log-timestamp';
+      ts.textContent = getTimestampText(log);
+      entry.appendChild(ts);
+    }
+
     if (showLogSource) {
       const src = document.createElement('span');
       src.className = `log-source${log.source ? ` source-${log.source}` : ''}`;
       src.textContent = getSourceText(log);
       entry.appendChild(src);
-    } else if (timestampMode !== 'hidden') {
-      const ts = document.createElement('span');
-      ts.className = 'log-timestamp';
-      ts.textContent = getTimestampText(log);
-      entry.appendChild(ts);
+    }
 
+    if (showLogLevel) {
       const lv = document.createElement('span');
       lv.className = 'log-level';
       lv.textContent = log.level.toUpperCase();

@@ -116,6 +116,12 @@ export function activate(context: vscode.ExtensionContext) {
     }
   });
 
+  const toggleLogLevelCommand = vscode.commands.registerCommand('debugConsolePlus.toggleLogLevel', () => {
+    if (viewProvider) {
+      viewProvider.toggleLogLevel();
+    }
+  });
+
   const copyAllCommand = vscode.commands.registerCommand('debugConsolePlus.copyAll', () => {
     if (viewProvider) {
       viewProvider.copyAllLogs();
@@ -348,7 +354,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
   });
 
-  context.subscriptions.push(focusCommand, focusFilterCommand, clearCommand, toggleTimestampsCommand, toggleLogSourceCommand, copyAllCommand, toggleCompactCommand, toggleTagsCommand, diagnoseCommand, setupMcpCommand, saveLogsCommand, loadLogsCommand, openLogsFolderCommand, tracker);
+  context.subscriptions.push(focusCommand, focusFilterCommand, clearCommand, toggleTimestampsCommand, toggleLogSourceCommand, toggleLogLevelCommand, copyAllCommand, toggleCompactCommand, toggleTagsCommand, diagnoseCommand, setupMcpCommand, saveLogsCommand, loadLogsCommand, openLogsFolderCommand, tracker);
 
   // Auto-show view when debug session starts
   vscode.debug.onDidStartDebugSession(() => {

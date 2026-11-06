@@ -323,25 +323,25 @@ body {
   min-width: 0;
 }
 
-/* Hide timestamps when showTimestamps is false */
-.hide-timestamps .log-timestamp,
-.hide-timestamps .log-source,
-.hide-timestamps .log-level {
+/* No timestamp, source or level column enabled */
+.hide-columns .log-timestamp,
+.hide-columns .log-source,
+.hide-columns .log-level {
   display: none;
 }
 
-.hide-timestamps .log-entry {
+.hide-columns .log-entry {
   gap: 4px;
 }
 
-/* Responsive: Hide timestamps when width < 200px */
-.hide-timestamps-responsive .log-timestamp,
-.hide-timestamps-responsive .log-source,
-.hide-timestamps-responsive .log-level {
+/* Responsive: hide all columns when width < autoHideTimestampsWidth */
+.hide-columns-responsive .log-timestamp,
+.hide-columns-responsive .log-source,
+.hide-columns-responsive .log-level {
   display: none;
 }
 
-.hide-timestamps-responsive .log-entry {
+.hide-columns-responsive .log-entry {
   gap: 4px;
 }
 

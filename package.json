@@ -82,20 +82,24 @@
           "group": "navigation@3"
         },
         {
-          "command": "debugConsolePlus.setupMcp",
+          "command": "debugConsolePlus.toggleLogLevel",
           "group": "navigation@4"
         },
         {
-          "command": "debugConsolePlus.openLogsFolder",
+          "command": "debugConsolePlus.setupMcp",
           "group": "navigation@5"
         },
         {
-          "command": "debugConsolePlus.saveLogs",
+          "command": "debugConsolePlus.openLogsFolder",
           "group": "navigation@6"
         },
         {
-          "command": "debugConsolePlus.loadLogs",
+          "command": "debugConsolePlus.saveLogs",
           "group": "navigation@7"
+        },
+        {
+          "command": "debugConsolePlus.loadLogs",
+          "group": "navigation@8"
         }
       ]
     },
@@ -132,8 +136,14 @@
       },
       {
         "command": "debugConsolePlus.toggleLogSource",
-        "title": "Show log source instead of timestamps",
+        "title": "Toggle Log Source",
         "icon": "$(symbol-namespace)",
+        "category": "Debug Console+"
+      },
+      {
+        "command": "debugConsolePlus.toggleLogLevel",
+        "title": "Toggle Log Level",
+        "icon": "$(symbol-enum)",
         "category": "Debug Console+"
       },
       {
@@ -208,7 +218,12 @@
         "debugConsolePlus.showLogSource": {
           "type": "boolean",
           "default": false,
-          "description": "Replace the timestamp column with the log source: APP (your code), FLUTTER (framework and tooling), PLATFORM (native Android/iOS logs) or DEBUGGER (debug adapter messages)"
+          "description": "Show the log source column: APP (your code), FLUTTER (framework and tooling), PLATFORM (native Android/iOS logs) or DEBUGGER (debug adapter messages)"
+        },
+        "debugConsolePlus.showLogLevel": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the log level column (DEBUG, INFO, WARN, ERROR)"
         },
         "debugConsolePlus.autoHideTimestampsWidth": {
           "type": "number",

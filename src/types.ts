@@ -30,8 +30,8 @@ export interface WebviewMessage {
   config?: {
     timestampMode: TimestampMode;
     autoHideTimestampsWidth: number;
-    /** Show log source in place of the timestamp column. */
     showLogSource: boolean;
+    showLogLevel: boolean;
     defaultLevels?: string[];
   };
   filter?: string;
