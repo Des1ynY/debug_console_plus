@@ -5,7 +5,7 @@
 
 A better debug console for VS Code / forks. Filter, search, and let AI query your logs.
 
-**Latest release:** 0.0.10 — see [CHANGELOG.md](CHANGELOG.md) for notes.
+**Latest release:** 0.0.11 — see [CHANGELOG.md](CHANGELOG.md) for notes.
 
 ![Debug Console+ demo](recording.gif)
 
@@ -16,15 +16,16 @@ A better debug console for VS Code / forks. Filter, search, and let AI query you
 - **Search** — search or filter logs by text or regex, combine with AND/OR logic
 - **Save / load logs** — export or restore sessions from the view title bar
 - **Columns** — timestamp, log source and log level columns toggle independently; all of them auto-hide on narrow panels
-  - **Timestamps** — the clock icon cycles absolute / relative / hidden
+  - **Timestamps** — the clock icon cycles absolute / elapsed / none; `debugConsolePlus.showTimestamps` sets the mode (`"absolute"`, `"elapsed"` or `"none"`)
   - **Log source** — where each line came from: `APP` (your code: `print`, `dart:developer` `log`), `FLUTTER` (framework errors and tooling), `PLATFORM` (native Android/iOS logs) or `DEBUGGER` (debug adapter messages). **Toggle Log Source** in the view title bar or `debugConsolePlus.showLogSource`
   - **Log level** — **Toggle Log Level** in the view title bar or `debugConsolePlus.showLogLevel`
 - **Title bar actions** — every action is its own title bar icon; right-click the title bar to hide the ones you don't use
-- **Compact** — strip timestamps, Android logcat tags, leading `[info]` / `[debug]` / `[warn]` / `[error]` tags, and box-drawing for clean output (experimental)
+- **Compact mode** — strip timestamps, Android logcat tags, leading `[info]` / `[debug]` / `[warn]` / `[error]` tags, and box-drawing for clean output (experimental). `debugConsolePlus.compactMode` turns it on at the start of each session
+- **Syntax highlighting** — `[TAGS]`, JSON and file links; `debugConsolePlus.syntaxHighlighting` sets the default for each session
 - **Auto-scroll** — follows new logs, pauses when you scroll up
 - **Copy & clipboard**
   - **Copy All Logs** (Command Palette or the copy icon in the view title bar) — copies every line that currently passes your level and search filters (not the unfiltered session). Each line is the enabled columns (timestamp, source, level) followed by the stored message text.
-  - **Copy up to here** / **Copy from here** — right-click any log line in the list. **Copy up to here** copies from the first filtered line through the line you clicked (inclusive). **Copy from here** copies from that line through the last filtered line (inclusive). Hovered ranges highlight so you can see what will be copied. Same filters and clipboard formatting as **Copy All Logs** (note: **Compact** only changes how lines are drawn in the view, not what gets copied).
+  - **Copy up to here** / **Copy from here** — right-click any log line in the list. **Copy up to here** copies from the first filtered line through the line you clicked (inclusive). **Copy from here** copies from that line through the last filtered line (inclusive). Hovered ranges highlight so you can see what will be copied. Same filters and clipboard formatting as **Copy All Logs** (note: **Compact mode** only changes how lines are drawn in the view, not what gets copied).
 
 
 ![Debug Console+ screenshot](copy_from_here.png)
@@ -72,15 +73,23 @@ If you upgraded from an older version, you can safely delete any `.debug_console
 
 ## Install
 
+### From a GitHub release (.vsix)
+
+1. Download `debug-console-plus-<version>.vsix` from the [Releases](https://github.com/Des1ynY/debug_console_plus/releases) page.
+2. Install it, either:
+   - **UI:** open the Extensions view, click **…** (Views and More Actions) → **Install from VSIX…**, and pick the file; or
+   - **CLI:** `code --install-extension debug-console-plus-<version>.vsix` (use `cursor` for Cursor, `codium` for VSCodium).
+3. Run **Developer: Reload Window**.
+
+The release uses the same extension ID as the Marketplace build (`pomisoft.debug-console-plus`), so it replaces an installed Marketplace version. To keep a newer Marketplace release from replacing it, right-click the extension in the Extensions view and turn off **Auto Update**.
+
+### From source
+
 ```bash
 npm install
 npm run compile
-```
-
-## Build
-
-```bash
 npx --yes @vscode/vsce package
+code --install-extension debug-console-plus-*.vsix
 ```
 
 ## License

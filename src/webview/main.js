@@ -18,6 +18,10 @@
   let contextMenuTargetIndex = -1;
   let compactMessages = false;
   let highlightTags = true; // true = highlight [TAGS], false = plain text
+  // Last compactMode / syntaxHighlighting setting values: config messages are resent on every
+  // setting change, so session toggles are only overridden when the setting itself changes
+  let compactModeSetting = null;
+  let syntaxHighlightingSetting = null;
   /** 'search' = levels filter the list, text only for find-in-view; 'and' / 'or' = text participates in filtering. */
   let filterMode = 'and';
   let localPackageNames = new Set(); // package names that are in the user's workspace (for link styling)
@@ -363,6 +367,14 @@
           showLogSource = !!message.config.showLogSource;
           showLogLevel = message.config.showLogLevel !== false;
           applyColors(message.config.colors || {});
+          if (message.config.compactMode !== compactModeSetting) {
+            compactModeSetting = message.config.compactMode;
+            compactMessages = !!compactModeSetting;
+          }
+          if (message.config.syntaxHighlighting !== syntaxHighlightingSetting) {
+            syntaxHighlightingSetting = message.config.syntaxHighlighting;
+            highlightTags = syntaxHighlightingSetting !== false;
+          }
           updateTimestampWidth();
           if (message.config.defaultLevels) {
             activeLevels = new Set(message.config.defaultLevels);

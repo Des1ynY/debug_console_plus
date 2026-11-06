@@ -44,9 +44,8 @@ export class DebugConsolePlusViewProvider implements vscode.WebviewViewProvider 
         if (e.affectsConfiguration('debugConsolePlus')) {
           const config = vscode.workspace.getConfiguration('debugConsolePlus');
           // Only react to showTimestamps itself, so changing other settings keeps the toggled mode
-          if (e.affectsConfiguration('debugConsolePlus.showTimestamps') && this.timestampMode !== 'relative') {
-            const showTs = config.get<boolean>('showTimestamps', true);
-            this.timestampMode = showTs ? 'absolute' : 'hidden';
+          if (e.affectsConfiguration('debugConsolePlus.showTimestamps')) {
+            this.timestampMode = timestampModeFromSetting();
             this.persistTimestampMode();
           }
           this.autoHideTimestampsWidth = config.get<number>('autoHideTimestampsWidth', 200);
@@ -66,8 +65,7 @@ export class DebugConsolePlusViewProvider implements vscode.WebviewViewProvider 
       this.timestampMode = saved;
       return;
     }
-    const config = vscode.workspace.getConfiguration('debugConsolePlus');
-    this.timestampMode = config.get<boolean>('showTimestamps', true) ? 'absolute' : 'hidden';
+    this.timestampMode = timestampModeFromSetting();
   }
 
   private persistTimestampMode(): void {
@@ -228,6 +226,8 @@ export class DebugConsolePlusViewProvider implements vscode.WebviewViewProvider 
           showLogSource: config.get<boolean>('showLogSource', false),
           showLogLevel: config.get<boolean>('showLogLevel', true),
           colors: config.get<Record<string, string>>('colors', {}),
+          syntaxHighlighting: config.get<boolean>('syntaxHighlighting', true),
+          compactMode: config.get<boolean>('compactMode', false),
           defaultLevels: defaultLevels,
         },
       } as WebviewMessage);
@@ -563,6 +563,20 @@ export class DebugConsolePlusViewProvider implements vscode.WebviewViewProvider 
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`;
+  }
+}
+
+/**
+ * Maps the showTimestamps setting ("absolute" | "elapsed" | "none") to the internal mode.
+ * Also accepts the pre-0.0.11 boolean (true = absolute, false = none).
+ */
+function timestampModeFromSetting(): TimestampMode {
+  const value = vscode.workspace.getConfiguration('debugConsolePlus').get<string | boolean>('showTimestamps', 'absolute');
+  switch (value) {
+    case 'elapsed': return 'relative';
+    case 'none':
+    case false: return 'hidden';
+    default: return 'absolute';
   }
 }
 

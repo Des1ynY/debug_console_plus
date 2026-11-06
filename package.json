@@ -71,12 +71,12 @@
           "group": "navigation@6"
         },
         {
-          "command": "debugConsolePlus.saveLogs",
+          "command": "debugConsolePlus.loadLogs",
           "when": "view == debugConsolePlusView",
           "group": "navigation@7"
         },
         {
-          "command": "debugConsolePlus.loadLogs",
+          "command": "debugConsolePlus.saveLogs",
           "when": "view == debugConsolePlusView",
           "group": "navigation@8"
         },
@@ -106,7 +106,7 @@
       },
       {
         "command": "debugConsolePlus.toggleCompact",
-        "title": "Compact (strip timestamps, level tags, logcat tags, box-drawing)",
+        "title": "Compact mode",
         "icon": "$(fold)",
         "category": "Debug Console+"
       },
@@ -205,9 +205,29 @@
           "description": "Maximum logs per session"
         },
         "debugConsolePlus.showTimestamps": {
+          "type": "string",
+          "enum": [
+            "absolute",
+            "elapsed",
+            "none"
+          ],
+          "enumDescriptions": [
+            "Time of day (HH:MM:SS.mmm)",
+            "Time since the first log of the session (+MM:SS.mmm)",
+            "No timestamp column"
+          ],
+          "default": "absolute",
+          "description": "Timestamp column mode. The clock icon cycles through the modes; changing this setting applies it right away."
+        },
+        "debugConsolePlus.syntaxHighlighting": {
           "type": "boolean",
           "default": true,
-          "description": "Show timestamps by default"
+          "description": "Highlight [TAGS], JSON and file links in log messages at the start of each session. The title bar toggle changes it for the current session only."
+        },
+        "debugConsolePlus.compactMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Start each session in compact mode: strip timestamps, level tags, logcat tags and box-drawing from messages. The title bar toggle changes it for the current session only."
         },
         "debugConsolePlus.showLogSource": {
           "type": "boolean",

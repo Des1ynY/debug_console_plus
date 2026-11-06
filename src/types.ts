@@ -34,6 +34,9 @@ export interface WebviewMessage {
     showLogLevel: boolean;
     /** Hex colors by key (timestamp, debug, info, warn, error); missing or empty = default. */
     colors: Record<string, string>;
+    /** Session defaults; the title bar toggles override them until the setting changes. */
+    syntaxHighlighting: boolean;
+    compactMode: boolean;
     defaultLevels?: string[];
   };
   filter?: string;
