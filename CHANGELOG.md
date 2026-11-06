@@ -12,6 +12,7 @@ All notable changes to this project are documented in this file.
 ### Changed
 
 - The filter field now stretches across the whole filter row.
+- Elapsed (relative) timestamps use a narrower column than absolute time; it widens only once the session passes an hour.
 - Timestamp, log source and log level columns are now independent toggles. Showing timestamps no longer forces the level column on: use **Toggle Log Level** in the title bar (or `debugConsolePlus.showLogLevel`, on by default).
 - **Compact** also strips a leading level tag (`[info]`, `[debug]`, `[warn]`, `[warning]`, `[error]`, any case) from messages. The level is still detected from it.
 - The **…** submenu is gone: every action is now its own view title bar icon, so you can hide each one individually by right-clicking the title bar.

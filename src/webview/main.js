@@ -10,6 +10,7 @@
   let searchRegex = null;
   let timestampMode = 'absolute'; // 'absolute' | 'relative' | 'hidden'
   let launchTimestamp = null; // timestamp of the first log entry
+  let timestampWidth = null; // current --timestamp-width value
   let autoHideTimestampsWidth = 200;
   let showLogSource = false;
   let showLogLevel = true;
@@ -330,6 +331,7 @@
         allLogs = message.logs || [];
         launchTimestamp = allLogs.length > 0 ? allLogs[0].timestamp : null;
         rebuildSourceButtons();
+        updateTimestampWidth();
         applyFilters();
         break;
       case 'newLog':
@@ -339,6 +341,7 @@
           }
           allLogs.push(message.log);
           ensureSourceButton(getSourceKey(message.log));
+          updateTimestampWidth();
           applyFiltersIncremental(allLogs.length - 1);
         }
         break;
@@ -347,6 +350,7 @@
         filteredLogs = [];
         launchTimestamp = null;
         rebuildSourceButtons();
+        updateTimestampWidth();
         itemHeights.clear();
         recalculatePositions();
         scheduleRender();
@@ -359,6 +363,7 @@
           showLogSource = !!message.config.showLogSource;
           showLogLevel = message.config.showLogLevel !== false;
           applyColors(message.config.colors || {});
+          updateTimestampWidth();
           if (message.config.defaultLevels) {
             activeLevels = new Set(message.config.defaultLevels);
             updateLevelButtons();
@@ -683,6 +688,26 @@
 
   function getSourceText(log) {
     return SOURCE_LABELS[log.source] || '';
+  }
+
+  /**
+   * Absolute "HH:MM:SS.mmm" needs 12ch; elapsed "+MM:SS.mmm" needs 10ch until the session
+   * passes an hour ("+H:MM:SS.mmm"), so the column stays aligned either way.
+   */
+  function updateTimestampWidth() {
+    let width = '12ch';
+    if (timestampMode === 'relative') {
+      const last = allLogs[allLogs.length - 1];
+      const elapsedMs = last && launchTimestamp !== null ? last.timestamp - launchTimestamp : 0;
+      width = elapsedMs >= 3600000 ? '12ch' : '10ch';
+    }
+    if (width === timestampWidth) return;
+    timestampWidth = width;
+    document.body.style.setProperty('--timestamp-width', width);
+    // Narrower column changes message wrapping
+    itemHeights.clear();
+    recalculatePositions();
+    scheduleRender(true);
   }
 
   function formatRelativeTimestamp(timestamp) {
