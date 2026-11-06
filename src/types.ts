@@ -32,6 +32,8 @@ export interface WebviewMessage {
     autoHideTimestampsWidth: number;
     showLogSource: boolean;
     showLogLevel: boolean;
+    /** Hex colors by key (timestamp, debug, info, warn, error); missing or empty = default. */
+    colors: Record<string, string>;
     defaultLevels?: string[];
   };
   filter?: string;

@@ -28,6 +28,22 @@ A better debug console for VS Code / forks. Filter, search, and let AI query you
 
 ![Debug Console+ screenshot](copy_from_here.png)
 
+## Colors
+
+Log rows use your theme's Debug Console colors by default. To change them for Debug Console+ only, set `debugConsolePlus.colors` in your settings (hex values; leave a value empty for the default):
+
+```jsonc
+"debugConsolePlus.colors": {
+  "timestamp": "#4d5566", // empty: the log level color
+  "debug": "",            // empty: theme descriptionForeground
+  "info": "#59c2ff",      // empty: theme debugConsole.infoForeground
+  "warn": "",             // empty: theme debugConsole.warningForeground
+  "error": ""             // empty: theme debugConsole.errorForeground
+}
+```
+
+A level color applies to the whole row: timestamp (unless `timestamp` is set), source, level and message, and to the level filter buttons.
+
 ## MCP Integration
 
 AI agents can query your debug logs using the built-in MCP server.

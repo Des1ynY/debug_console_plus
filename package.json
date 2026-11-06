@@ -219,6 +219,50 @@
           "default": true,
           "description": "Show the log level column (DEBUG, INFO, WARN, ERROR)"
         },
+        "debugConsolePlus.colors": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "timestamp": {
+              "type": "string",
+              "pattern": "^(#[0-9a-fA-F]{3,8})?$",
+              "patternErrorMessage": "Use a hex color like #4d5566, or an empty string for the default.",
+              "markdownDescription": "Timestamp column. Empty: the log level color."
+            },
+            "debug": {
+              "type": "string",
+              "pattern": "^(#[0-9a-fA-F]{3,8})?$",
+              "patternErrorMessage": "Use a hex color like #4d5566, or an empty string for the default.",
+              "markdownDescription": "Debug rows. Empty: theme `descriptionForeground`."
+            },
+            "info": {
+              "type": "string",
+              "pattern": "^(#[0-9a-fA-F]{3,8})?$",
+              "patternErrorMessage": "Use a hex color like #4d5566, or an empty string for the default.",
+              "markdownDescription": "Info rows. Empty: theme `debugConsole.infoForeground`."
+            },
+            "warn": {
+              "type": "string",
+              "pattern": "^(#[0-9a-fA-F]{3,8})?$",
+              "patternErrorMessage": "Use a hex color like #4d5566, or an empty string for the default.",
+              "markdownDescription": "Warning rows. Empty: theme `debugConsole.warningForeground`."
+            },
+            "error": {
+              "type": "string",
+              "pattern": "^(#[0-9a-fA-F]{3,8})?$",
+              "patternErrorMessage": "Use a hex color like #4d5566, or an empty string for the default.",
+              "markdownDescription": "Error rows. Empty: theme `debugConsole.errorForeground`."
+            }
+          },
+          "default": {
+            "timestamp": "",
+            "debug": "",
+            "info": "",
+            "warn": "",
+            "error": ""
+          },
+          "markdownDescription": "Log colors as hex values (e.g. `#4d5566`). A level color applies to the whole row: timestamp, source, level and message. Leave a value empty to use the theme's Debug Console color; leave `timestamp` empty to use the log level color."
+        },
         "debugConsolePlus.autoHideTimestampsWidth": {
           "type": "number",
           "default": 200,

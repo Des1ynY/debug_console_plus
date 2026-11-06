@@ -20,6 +20,13 @@
 }
 
 body {
+  /* Level colors: --color-* come from the debugConsolePlus.colors setting (set on body by main.js),
+     otherwise the theme's Debug Console colors; debug has none, so it uses muted text */
+  --level-debug: var(--color-debug, var(--vscode-descriptionForeground, #888));
+  --level-info: var(--color-info, var(--vscode-debugConsole-infoForeground, #3794ff));
+  --level-warn: var(--color-warn, var(--vscode-debugConsole-warningForeground, #cca700));
+  --level-error: var(--color-error, var(--vscode-debugConsole-errorForeground, #f48771));
+
   font-family: var(--vscode-font-family);
   font-size: var(--vscode-font-size);
   color: var(--vscode-foreground);
@@ -78,23 +85,23 @@ body {
 }
 
 .level-btn[data-level="debug"].active {
-  background-color: var(--vscode-debugIcon-startForeground, #89d185);
-  color: #000;
+  background-color: var(--level-debug);
+  color: var(--vscode-editor-background);
 }
 
 .level-btn[data-level="info"].active {
-  background-color: var(--vscode-editorInfo-foreground, #3794ff);
-  color: #fff;
+  background-color: var(--level-info);
+  color: var(--vscode-editor-background);
 }
 
 .level-btn[data-level="warn"].active {
-  background-color: var(--vscode-editorWarning-foreground, #cca700);
-  color: #000;
+  background-color: var(--level-warn);
+  color: var(--vscode-editor-background);
 }
 
 .level-btn[data-level="error"].active {
-  background-color: var(--vscode-editorError-foreground, #f48771);
-  color: #000;
+  background-color: var(--level-error);
+  color: var(--vscode-editor-background);
 }
 
 /* Logic toggle button */
@@ -248,43 +255,30 @@ body {
   display: none;
 }
 
+/* One color per row: timestamp (unless colors.timestamp is set), source, level and message inherit it */
 .log-entry.debug {
-  color: var(--vscode-descriptionForeground, #888);
+  color: var(--level-debug);
 }
 
-.log-entry.debug .log-timestamp,
-.log-entry.debug .log-level {
-  color: var(--vscode-debugIcon-startForeground, #89d185);
-}
-
-.log-entry.info .log-timestamp,
-.log-entry.info .log-level {
-  color: var(--vscode-editorInfo-foreground, #3794ff);
+.log-entry.info {
+  color: var(--level-info);
 }
 
 .log-entry.warn {
-  color: var(--vscode-editorWarning-foreground, #cca700);
-}
-
-.log-entry.warn .log-timestamp,
-.log-entry.warn .log-level {
-  color: var(--vscode-editorWarning-foreground, #cca700);
+  color: var(--level-warn);
 }
 
 .log-entry.error {
-  color: var(--vscode-editorError-foreground, #f48771);
-}
-
-.log-entry.error .log-timestamp,
-.log-entry.error .log-level {
-  color: var(--vscode-editorError-foreground, #f48771);
+  color: var(--level-error);
 }
 
 .log-timestamp {
   flex-shrink: 0;
   min-width: 12ch;
   text-align: right;
-  color: var(--vscode-descriptionForeground, #999);
+  /* When colors.timestamp isn't set, var() is invalid and color falls back to unset,
+     i.e. inherits the row's level color. */
+  color: var(--color-timestamp);
   font-size: 0.9em;
   white-space: nowrap;
 }
@@ -295,19 +289,6 @@ body {
   text-align: right;
   font-size: 0.9em;
   white-space: nowrap;
-}
-
-/* App logs keep the level color (inherited from the row); other sources get their own */
-.log-entry .log-source.source-flutter {
-  color: var(--vscode-charts-blue, #3794ff);
-}
-
-.log-entry .log-source.source-platform {
-  color: var(--vscode-charts-purple, #b180d7);
-}
-
-.log-entry .log-source.source-debugger {
-  color: var(--vscode-descriptionForeground, #999);
 }
 
 .log-level {

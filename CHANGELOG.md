@@ -14,6 +14,9 @@ All notable changes to this project are documented in this file.
 - **Compact** also strips a leading level tag (`[info]`, `[debug]`, `[warn]`, `[warning]`, `[error]`, any case) from messages. The level is still detected from it.
 - The **…** submenu is gone: every action is now its own view title bar icon, so you can hide each one individually by right-clicking the title bar.
 
+- Log colors follow the IDE theme's Debug Console colors (`debugConsole.infoForeground`, `warningForeground`, `errorForeground`; debug uses `descriptionForeground`). The timestamp, source, level and message of a row now share one color, and the level filter buttons use the same colors.
+- `debugConsolePlus.colors` setting (`timestamp`, `debug`, `info`, `warn`, `error`) overrides log colors for Debug Console+ only. Empty values use the theme's Debug Console colors; an empty `timestamp` uses the log level color.
+
 ### Fixed
 
 - Changing any Debug Console+ setting no longer resets the timestamp mode chosen with the toggle button.

@@ -56,6 +56,7 @@
   // Level tag at the start of the message: [info] / [DEBUG] / [warn] / [warning] / [error] (indentation kept)
   const LEVEL_TAG_PREFIX_REGEX = /^(\s*)\[(?:debug|info|warn|warning|error)\]\s*/i;
   const TAG_REGEX = /\[([A-Za-z][\w. =-]*)\]/g;
+  const COLOR_KEYS = ['timestamp', 'debug', 'info', 'warn', 'error'];
   const SOURCE_LABELS = { app: 'APP', flutter: 'FLUTTER', platform: 'PLATFORM', debugger: 'DEBUGGER' };
 
   const SEARCH_TOGGLE_SVG =
@@ -348,6 +349,7 @@
           autoHideTimestampsWidth = message.config.autoHideTimestampsWidth || 200;
           showLogSource = !!message.config.showLogSource;
           showLogLevel = message.config.showLogLevel !== false;
+          applyColors(message.config.colors || {});
           if (message.config.defaultLevels) {
             activeLevels = new Set(message.config.defaultLevels);
             updateLevelButtons();
@@ -605,6 +607,18 @@
   /** Timestamp, source and level columns are toggled independently. */
   function hasColumns() {
     return timestampMode !== 'hidden' || showLogSource || showLogLevel;
+  }
+
+  /** Exposes the debugConsolePlus.colors setting as --color-<key> on body; empty values are removed. */
+  function applyColors(colors) {
+    for (const key of COLOR_KEYS) {
+      const value = typeof colors[key] === 'string' ? colors[key].trim() : '';
+      if (value) {
+        document.body.style.setProperty(`--color-${key}`, value);
+      } else {
+        document.body.style.removeProperty(`--color-${key}`);
+      }
+    }
   }
 
   function updateColumnVisibility() {
@@ -962,7 +976,7 @@
 
     if (showLogSource) {
       const src = document.createElement('span');
-      src.className = `log-source${log.source ? ` source-${log.source}` : ''}`;
+      src.className = 'log-source';
       src.textContent = getSourceText(log);
       entry.appendChild(src);
     }

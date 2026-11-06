@@ -227,6 +227,7 @@ export class DebugConsolePlusViewProvider implements vscode.WebviewViewProvider 
           autoHideTimestampsWidth: this.autoHideTimestampsWidth,
           showLogSource: config.get<boolean>('showLogSource', false),
           showLogLevel: config.get<boolean>('showLogLevel', true),
+          colors: config.get<Record<string, string>>('colors', {}),
           defaultLevels: defaultLevels,
         },
       } as WebviewMessage);
