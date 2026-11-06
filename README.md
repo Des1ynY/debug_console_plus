@@ -12,6 +12,7 @@ A better debug console for VS Code / forks. Filter, search, and let AI query you
 ## Features
 
 - **Level filtering** — toggle debug / info / warn / error with one click
+- **Source filtering** — a button appears at the end of the filter row for each log source in the session (`APP`, `FLUTTER`, `PLATFORM`, `DEBUGGER`; `UNKNOWN` for logs loaded from older files); click to hide or show that source
 - **Search** — search or filter logs by text or regex, combine with AND/OR logic
 - **Save / load logs** — export or restore sessions from the view title bar
 - **Columns** — timestamp, log source and log level columns toggle independently; all of them auto-hide on narrow panels

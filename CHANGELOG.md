@@ -7,9 +7,11 @@ All notable changes to this project are documented in this file.
 ### Added
 
 - **Log source** column: each log is tagged as `APP`, `FLUTTER`, `PLATFORM` or `DEBUGGER`, based on the DAP output category and the line contents. Toggle it with **Toggle Log Source** in the title bar (or `debugConsolePlus.showLogSource`). The source is also stored in `logs.json`, so MCP clients can see it.
+- **Source filter** buttons at the end of the filter row, one per log source present in the session. New sources get a button as soon as they appear; hidden sources stay hidden in every filter mode. **Show without filters** also resets them.
 
 ### Changed
 
+- The filter field now stretches across the whole filter row.
 - Timestamp, log source and log level columns are now independent toggles. Showing timestamps no longer forces the level column on: use **Toggle Log Level** in the title bar (or `debugConsolePlus.showLogLevel`, on by default).
 - **Compact** also strips a leading level tag (`[info]`, `[debug]`, `[warn]`, `[warning]`, `[error]`, any case) from messages. The level is still detected from it.
 - The **…** submenu is gone: every action is now its own view title bar icon, so you can hide each one individually by right-clicking the title bar.

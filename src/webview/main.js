@@ -4,6 +4,8 @@
   let allLogs = [];
   let filteredLogs = [];
   let activeLevels = new Set(['info', 'warn', 'error']);
+  /** Sources the user switched off; tracked as hidden so newly appearing sources are shown. */
+  let hiddenSources = new Set();
   let searchQuery = '';
   let searchRegex = null;
   let timestampMode = 'absolute'; // 'absolute' | 'relative' | 'hidden'
@@ -58,6 +60,9 @@
   const TAG_REGEX = /\[([A-Za-z][\w. =-]*)\]/g;
   const COLOR_KEYS = ['timestamp', 'debug', 'info', 'warn', 'error'];
   const SOURCE_LABELS = { app: 'APP', flutter: 'FLUTTER', platform: 'PLATFORM', debugger: 'DEBUGGER' };
+  // Logs saved by versions without source detection
+  const UNKNOWN_SOURCE = 'unknown';
+  const SOURCE_ORDER = ['app', 'flutter', 'platform', 'debugger', UNKNOWN_SOURCE];
 
   const SEARCH_TOGGLE_SVG =
     '<svg class="logic-toggle-search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
@@ -65,6 +70,7 @@
   // DOM elements
   const logsContainer = document.getElementById('logsContainer');
   const levelButtons = document.querySelectorAll('#levelFilters .level-btn');
+  const sourceFilters = document.getElementById('sourceFilters');
   const filterInput = document.getElementById('filterInput');
   const logicToggle = document.getElementById('logicToggle');
   const searchNav = document.getElementById('searchNav');
@@ -323,6 +329,7 @@
       case 'logs':
         allLogs = message.logs || [];
         launchTimestamp = allLogs.length > 0 ? allLogs[0].timestamp : null;
+        rebuildSourceButtons();
         applyFilters();
         break;
       case 'newLog':
@@ -331,6 +338,7 @@
             launchTimestamp = message.log.timestamp;
           }
           allLogs.push(message.log);
+          ensureSourceButton(getSourceKey(message.log));
           applyFiltersIncremental(allLogs.length - 1);
         }
         break;
@@ -338,6 +346,7 @@
         allLogs = [];
         filteredLogs = [];
         launchTimestamp = null;
+        rebuildSourceButtons();
         itemHeights.clear();
         recalculatePositions();
         scheduleRender();
@@ -395,6 +404,53 @@
     }
     updateLevelButtons();
     applyFilters();
+  }
+
+  function getSourceKey(log) {
+    return log.source || UNKNOWN_SOURCE;
+  }
+
+  /** Adds a filter button the first time a source shows up, keeping SOURCE_ORDER. */
+  function ensureSourceButton(source) {
+    if (!sourceFilters || sourceFilters.querySelector(`[data-source="${source}"]`)) return;
+
+    const label = SOURCE_LABELS[source] || source.toUpperCase();
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'level-btn source-btn';
+    btn.dataset.source = source;
+    btn.textContent = label;
+    btn.title = `Toggle ${label} logs`;
+    btn.classList.toggle('active', !hiddenSources.has(source));
+    btn.addEventListener('click', () => toggleSource(source));
+
+    const rank = SOURCE_ORDER.indexOf(source);
+    const next = Array.from(sourceFilters.children).find((el) => SOURCE_ORDER.indexOf(el.dataset.source) > rank);
+    sourceFilters.insertBefore(btn, next || null);
+  }
+
+  /** Buttons reflect the sources present in allLogs; hidden choices survive for sources that come back. */
+  function rebuildSourceButtons() {
+    if (!sourceFilters) return;
+    sourceFilters.innerHTML = '';
+    new Set(allLogs.map(getSourceKey)).forEach(ensureSourceButton);
+  }
+
+  function toggleSource(source) {
+    if (hiddenSources.has(source)) {
+      hiddenSources.delete(source);
+    } else {
+      hiddenSources.add(source);
+    }
+    updateSourceButtons();
+    applyFilters();
+  }
+
+  function updateSourceButtons() {
+    if (!sourceFilters) return;
+    sourceFilters.querySelectorAll('.source-btn').forEach((btn) => {
+      btn.classList.toggle('active', !hiddenSources.has(btn.dataset.source));
+    });
   }
 
   function updateLevelButtons() {
@@ -691,6 +747,10 @@
   }
 
   function passLevelAndSearchFilter(log) {
+    // Source filter always narrows the list, whatever the level/text filter mode
+    if (hiddenSources.has(getSourceKey(log))) {
+      return false;
+    }
     const hasText = searchQuery && searchQuery.trim().length > 0;
     const levelMatch = matchesLevel(log);
     if (filterMode === 'search') {
@@ -1126,7 +1186,7 @@
     copyDown.onclick = () => { copyLogsRange(index, filteredLogs.length - 1); hideContextMenu(); };
     menu.appendChild(copyDown);
 
-    if (searchQuery || activeLevels.size < 4) {
+    if (searchQuery || activeLevels.size < 4 || hiddenSources.size > 0) {
       const sep = document.createElement('div');
       sep.className = 'context-menu-separator';
       menu.appendChild(sep);
@@ -1140,6 +1200,8 @@
         if (filterInput) filterInput.value = '';
         activeLevels = new Set(['debug', 'info', 'warn', 'error']);
         updateLevelButtons();
+        hiddenSources.clear();
+        updateSourceButtons();
         applyFilters();
 
         requestAnimationFrame(() => {

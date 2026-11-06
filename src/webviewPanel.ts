@@ -557,6 +557,7 @@ export class DebugConsolePlusViewProvider implements vscode.WebviewViewProvider 
 							<button type="button" class="level-btn search-nav-btn active" data-level="info" id="searchNext" title="Next match (Enter)">&#x2193;</button>
 						</div>
 					</div>
+					<div class="source-filters" id="sourceFilters"></div>
 				</div>
 				<div class="logs-container" id="logsContainer"></div>
 				<script nonce="${nonce}" src="${scriptUri}"></script>

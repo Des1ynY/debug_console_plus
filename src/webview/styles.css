@@ -84,6 +84,22 @@ body {
   opacity: 1;
 }
 
+/* Source filter buttons: one per log source seen in the session, added as sources appear */
+.source-filters {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.source-filters:empty {
+  display: none;
+}
+
+.level-btn.source-btn {
+  width: auto;
+  padding: 0 4px;
+}
+
 .level-btn[data-level="debug"].active {
   background-color: var(--level-debug);
   color: var(--vscode-editor-background);
@@ -154,7 +170,6 @@ body {
 .filter-input {
   flex: 1;
   min-width: 80px;
-  max-width: 300px;
   padding: 2px 6px;
   background-color: var(--vscode-input-background);
   color: var(--vscode-input-foreground);
