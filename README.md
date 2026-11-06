@@ -13,11 +13,12 @@ A better debug console for VS Code / forks. Filter, search, and let AI query you
 
 - **Level filtering** — toggle debug / info / warn / error with one click
 - **Search** — search or filter logs by text or regex, combine with AND/OR logic
-- **Save / load logs** — export or restore sessions from the **…** (more) menu in the view title bar
+- **Save / load logs** — export or restore sessions from the view title bar
 - **Columns** — timestamp, log source and log level columns toggle independently; all of them auto-hide on narrow panels
   - **Timestamps** — the clock icon cycles absolute / relative / hidden
-  - **Log source** — where each line came from: `APP` (your code: `print`, `dart:developer` `log`), `FLUTTER` (framework errors and tooling), `PLATFORM` (native Android/iOS logs) or `DEBUGGER` (debug adapter messages). **Toggle Log Source** in the **…** menu or `debugConsolePlus.showLogSource`
-  - **Log level** — **Toggle Log Level** in the **…** menu or `debugConsolePlus.showLogLevel`
+  - **Log source** — where each line came from: `APP` (your code: `print`, `dart:developer` `log`), `FLUTTER` (framework errors and tooling), `PLATFORM` (native Android/iOS logs) or `DEBUGGER` (debug adapter messages). **Toggle Log Source** in the view title bar or `debugConsolePlus.showLogSource`
+  - **Log level** — **Toggle Log Level** in the view title bar or `debugConsolePlus.showLogLevel`
+- **Title bar actions** — every action is its own title bar icon; right-click the title bar to hide the ones you don't use
 - **Compact** — strip timestamps, Android logcat tags, and box-drawing for clean output (experimental)
 - **Auto-scroll** — follows new logs, pauses when you scroll up
 - **Copy & clipboard**
@@ -31,7 +32,7 @@ A better debug console for VS Code / forks. Filter, search, and let AI query you
 
 AI agents can query your debug logs using the built-in MCP server.
 
-**Setup:** open the **…** (more) menu in the Debug Console+ title bar, then choose **Set Up MCP Server** (plug icon). The setup writes an absolute path to the per-workspace logs directory into `.cursor/mcp.json`, so re-run it if you move workspaces or upgrade from a version older than 0.0.9.
+**Setup:** click **Set Up MCP Server** (plug icon) in the Debug Console+ title bar. The setup writes an absolute path to the per-workspace logs directory into `.cursor/mcp.json`, so re-run it if you move workspaces or upgrade from a version older than 0.0.9.
 
 Example queries an agent can answer:
 - "Show me only errors"
@@ -42,7 +43,7 @@ Example queries an agent can answer:
 
 Live logs are written to the extension's per-user **global storage** (outside any workspace), under a per-workspace subdirectory. They are never placed in your project folder, so they don't pollute Git, leak local paths, or grow inside the repo.
 
-Use the **Open Logs Folder** entry in the **…** (more) menu to reveal the current workspace's logs directory in your OS file manager. Typical locations:
+Use **Open Logs Folder** (folder icon) in the title bar to reveal the current workspace's logs directory in your OS file manager. Typical locations:
 
 - macOS: `~/Library/Application Support/<App>/User/globalStorage/pomisoft.debug-console-plus/workspaces/<workspace-name>-<hash>/`
 - Linux: `~/.config/<App>/User/globalStorage/pomisoft.debug-console-plus/workspaces/<workspace-name>-<hash>/`

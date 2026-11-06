@@ -38,13 +38,6 @@
         }
       ]
     },
-    "submenus": [
-      {
-        "id": "debugConsolePlus.more",
-        "label": "...",
-        "icon": "$(ellipsis)"
-      }
-    ],
     "menus": {
       "view/title": [
         {
@@ -53,53 +46,54 @@
           "group": "navigation@1"
         },
         {
-          "command": "debugConsolePlus.copyAll",
-          "when": "view == debugConsolePlusView",
-          "group": "navigation@2"
-        },
-        {
-          "submenu": "debugConsolePlus.more",
-          "when": "view == debugConsolePlusView",
-          "group": "navigation@3"
-        },
-        {
-          "command": "debugConsolePlus.clear",
-          "when": "view == debugConsolePlusView",
-          "group": "navigation@4"
-        }
-      ],
-      "debugConsolePlus.more": [
-        {
-          "command": "debugConsolePlus.toggleTags",
-          "group": "navigation@1"
-        },
-        {
-          "command": "debugConsolePlus.toggleCompact",
-          "group": "navigation@2"
-        },
-        {
           "command": "debugConsolePlus.toggleLogSource",
-          "group": "navigation@3"
+          "when": "view == debugConsolePlusView",
+          "group": "navigation@2"
         },
         {
           "command": "debugConsolePlus.toggleLogLevel",
+          "when": "view == debugConsolePlusView",
+          "group": "navigation@3"
+        },
+        {
+          "command": "debugConsolePlus.toggleTags",
+          "when": "view == debugConsolePlusView",
           "group": "navigation@4"
         },
         {
-          "command": "debugConsolePlus.setupMcp",
+          "command": "debugConsolePlus.toggleCompact",
+          "when": "view == debugConsolePlusView",
           "group": "navigation@5"
         },
         {
-          "command": "debugConsolePlus.openLogsFolder",
+          "command": "debugConsolePlus.copyAll",
+          "when": "view == debugConsolePlusView",
           "group": "navigation@6"
         },
         {
           "command": "debugConsolePlus.saveLogs",
+          "when": "view == debugConsolePlusView",
           "group": "navigation@7"
         },
         {
           "command": "debugConsolePlus.loadLogs",
+          "when": "view == debugConsolePlusView",
           "group": "navigation@8"
+        },
+        {
+          "command": "debugConsolePlus.openLogsFolder",
+          "when": "view == debugConsolePlusView",
+          "group": "navigation@9"
+        },
+        {
+          "command": "debugConsolePlus.setupMcp",
+          "when": "view == debugConsolePlusView",
+          "group": "navigation@10"
+        },
+        {
+          "command": "debugConsolePlus.clear",
+          "when": "view == debugConsolePlusView",
+          "group": "navigation@11"
         }
       ]
     },

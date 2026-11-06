@@ -6,11 +6,12 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
-- **Log source** column: each log is tagged as `APP`, `FLUTTER`, `PLATFORM` or `DEBUGGER`, based on the DAP output category and the line contents. Toggle it with **Toggle Log Source** in the **…** menu (or `debugConsolePlus.showLogSource`). The source is also stored in `logs.json`, so MCP clients can see it.
+- **Log source** column: each log is tagged as `APP`, `FLUTTER`, `PLATFORM` or `DEBUGGER`, based on the DAP output category and the line contents. Toggle it with **Toggle Log Source** in the title bar (or `debugConsolePlus.showLogSource`). The source is also stored in `logs.json`, so MCP clients can see it.
 
 ### Changed
 
-- Timestamp, log source and log level columns are now independent toggles. Showing timestamps no longer forces the level column on: use **Toggle Log Level** in the **…** menu (or `debugConsolePlus.showLogLevel`, on by default).
+- Timestamp, log source and log level columns are now independent toggles. Showing timestamps no longer forces the level column on: use **Toggle Log Level** in the title bar (or `debugConsolePlus.showLogLevel`, on by default).
+- The **…** submenu is gone: every action is now its own view title bar icon, so you can hide each one individually by right-clicking the title bar.
 
 ### Fixed
 
