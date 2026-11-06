@@ -3,6 +3,9 @@ export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 /** DAP output event group: start/end of a logical group (e.g. box borders around a log entry). */
 export type DapOutputGroup = 'start' | 'startCollapsed' | 'end';
 
+/** Where a log line came from: user code, Flutter framework/tooling, native platform, or the debug adapter itself. */
+export type LogSource = 'app' | 'flutter' | 'platform' | 'debugger';
+
 export interface ParsedLog {
   id: string;
   timestamp: number;
@@ -10,6 +13,8 @@ export interface ParsedLog {
   message: string;
   category: string;
   sessionId: string;
+  /** Missing on logs loaded from files saved by older versions. */
+  source?: LogSource;
   /** Set when DAP output event had group; used for level inheritance from content line. */
   group?: DapOutputGroup;
 }
@@ -25,6 +30,8 @@ export interface WebviewMessage {
   config?: {
     timestampMode: TimestampMode;
     autoHideTimestampsWidth: number;
+    /** Show log source in place of the timestamp column. */
+    showLogSource: boolean;
     defaultLevels?: string[];
   };
   filter?: string;

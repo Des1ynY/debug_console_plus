@@ -289,6 +289,27 @@ body {
   white-space: nowrap;
 }
 
+.log-source {
+  flex-shrink: 0;
+  min-width: 8ch;
+  text-align: right;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+/* App logs keep the level color (inherited from the row); other sources get their own */
+.log-entry .log-source.source-flutter {
+  color: var(--vscode-charts-blue, #3794ff);
+}
+
+.log-entry .log-source.source-platform {
+  color: var(--vscode-charts-purple, #b180d7);
+}
+
+.log-entry .log-source.source-debugger {
+  color: var(--vscode-descriptionForeground, #999);
+}
+
 .log-level {
   flex-shrink: 0;
   font-weight: 600;
@@ -304,6 +325,7 @@ body {
 
 /* Hide timestamps when showTimestamps is false */
 .hide-timestamps .log-timestamp,
+.hide-timestamps .log-source,
 .hide-timestamps .log-level {
   display: none;
 }
@@ -314,6 +336,7 @@ body {
 
 /* Responsive: Hide timestamps when width < 200px */
 .hide-timestamps-responsive .log-timestamp,
+.hide-timestamps-responsive .log-source,
 .hide-timestamps-responsive .log-level {
   display: none;
 }

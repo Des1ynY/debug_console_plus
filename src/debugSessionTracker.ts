@@ -2,8 +2,9 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { promises as fsp } from 'fs';
-import { DapOutputGroup, LogsUpdate, ParsedLog } from './types';
+import { DapOutputGroup, LogSource, LogsUpdate, ParsedLog } from './types';
 import { parseLogEntry } from './logParser';
+import { getSessionProfile, LogSourceClassifier } from './logSource';
 
 export class DebugSessionTracker implements vscode.Disposable {
   private disposables: vscode.Disposable[] = [];
@@ -75,14 +76,15 @@ export class DebugSessionTracker implements vscode.Disposable {
   /**
    * Handle output from DAP - called by the tracker.
    * @param group - DAP output body.group; group boundaries inherit level from the content line in the group.
+   * @param source - Origin of the output, classified by the session's DebugAdapterTracker.
    */
-  public handleOutput(output: string, category: string, sessionId: string, group?: DapOutputGroup) {
+  public handleOutput(output: string, category: string, sessionId: string, group?: DapOutputGroup, source?: LogSource) {
     if (!output || output.trim().length === 0) {
       return;
     }
 
     const timestamp = Date.now();
-    const log = parseLogEntry(output, category, sessionId, timestamp, group);
+    const log = parseLogEntry(output, category, sessionId, timestamp, group, source);
 
     // Skip empty messages after cleaning
     if (!log.message || log.message.trim().length === 0) {
@@ -243,10 +245,14 @@ export class DebugSessionTracker implements vscode.Disposable {
  * Debug Adapter Tracker - intercepts all DAP messages
  */
 class DebugAdapterTracker implements vscode.DebugAdapterTracker {
+  private sourceClassifier: LogSourceClassifier;
+
   constructor(
     private session: vscode.DebugSession,
     private tracker: DebugSessionTracker
-  ) {}
+  ) {
+    this.sourceClassifier = new LogSourceClassifier(getSessionProfile(session));
+  }
 
   /**
    * Called when a message is received from the debug adapter
@@ -258,7 +264,8 @@ class DebugAdapterTracker implements vscode.DebugAdapterTracker {
       if (body && body.output) {
         const category = body.category || 'console';
         const group = body.group; // 'start' | 'startCollapsed' | 'end' for grouped output (e.g. box borders)
-        this.tracker.handleOutput(body.output, category, this.session.id, group);
+        const source = this.sourceClassifier.classify(body.output, category);
+        this.tracker.handleOutput(body.output, category, this.session.id, group, source);
       }
     }
   }

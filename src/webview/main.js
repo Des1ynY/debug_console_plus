@@ -9,6 +9,7 @@
   let timestampMode = 'absolute'; // 'absolute' | 'relative' | 'hidden'
   let launchTimestamp = null; // timestamp of the first log entry
   let autoHideTimestampsWidth = 200;
+  let showLogSource = false; // true = source column replaces the timestamp column
   let shouldAutoScroll = true;
   let contextMenuTargetIndex = -1;
   let compactMessages = false;
@@ -52,6 +53,7 @@
   // Box-drawing characters used by logger packages (e.g. │├└┌┐┘─║╔╗╚╝ etc.)
   const BOX_DRAWING_REGEX = /[│├└┌┐┘┴┬┼─║╔╗╚╝╠╣╦╩╬]+\s*/g;
   const TAG_REGEX = /\[([A-Za-z][\w. =-]*)\]/g;
+  const SOURCE_LABELS = { app: 'APP', flutter: 'FLUTTER', platform: 'PLATFORM', debugger: 'DEBUGGER' };
 
   const SEARCH_TOGGLE_SVG =
     '<svg class="logic-toggle-search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
@@ -341,6 +343,7 @@
         if (message.config) {
           timestampMode = message.config.timestampMode || 'absolute';
           autoHideTimestampsWidth = message.config.autoHideTimestampsWidth || 200;
+          showLogSource = !!message.config.showLogSource;
           if (message.config.defaultLevels) {
             activeLevels = new Set(message.config.defaultLevels);
             updateLevelButtons();
@@ -591,8 +594,16 @@
     }
   }
 
+  function isFirstColumnVisible() {
+    return showLogSource || timestampMode !== 'hidden';
+  }
+
   function updateTimestampVisibility() {
-    document.body.classList.toggle('hide-timestamps', timestampMode === 'hidden');
+    document.body.classList.toggle('hide-timestamps', !isFirstColumnVisible());
+  }
+
+  function getSourceText(log) {
+    return SOURCE_LABELS[log.source] || '';
   }
 
   function formatRelativeTimestamp(timestamp) {
@@ -623,6 +634,7 @@
   }
 
   function formatLogForCopy(log) {
+    if (showLogSource) return `${getSourceText(log)} ${log.message}`;
     if (timestampMode === 'hidden') return log.message;
     const ts = timestampMode === 'relative'
       ? formatRelativeTimestamp(log.timestamp)
@@ -932,7 +944,12 @@
     entry.className = `log-entry ${log.level}`;
     entry.dataset.logIndex = index;
 
-    if (timestampMode !== 'hidden') {
+    if (showLogSource) {
+      const src = document.createElement('span');
+      src.className = `log-source${log.source ? ` source-${log.source}` : ''}`;
+      src.textContent = getSourceText(log);
+      entry.appendChild(src);
+    } else if (timestampMode !== 'hidden') {
       const ts = document.createElement('span');
       ts.className = 'log-timestamp';
       ts.textContent = getTimestampText(log);

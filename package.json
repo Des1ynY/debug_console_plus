@@ -3,7 +3,7 @@
   "displayName": "Debug Console+",
   "publisher": "Pomisoft",
   "description": "A better debug console with filtering, search, and MCP integration",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "icon": "icon.png",
   "repository": {
     "type": "git",
@@ -78,20 +78,24 @@
           "group": "navigation@2"
         },
         {
-          "command": "debugConsolePlus.setupMcp",
+          "command": "debugConsolePlus.toggleLogSource",
           "group": "navigation@3"
         },
         {
-          "command": "debugConsolePlus.openLogsFolder",
+          "command": "debugConsolePlus.setupMcp",
           "group": "navigation@4"
         },
         {
-          "command": "debugConsolePlus.saveLogs",
+          "command": "debugConsolePlus.openLogsFolder",
           "group": "navigation@5"
         },
         {
-          "command": "debugConsolePlus.loadLogs",
+          "command": "debugConsolePlus.saveLogs",
           "group": "navigation@6"
+        },
+        {
+          "command": "debugConsolePlus.loadLogs",
+          "group": "navigation@7"
         }
       ]
     },
@@ -124,6 +128,12 @@
         "command": "debugConsolePlus.toggleTimestamps",
         "title": "Toggle Timestamps",
         "icon": "$(watch)",
+        "category": "Debug Console+"
+      },
+      {
+        "command": "debugConsolePlus.toggleLogSource",
+        "title": "Show log source instead of timestamps",
+        "icon": "$(symbol-namespace)",
         "category": "Debug Console+"
       },
       {
@@ -194,6 +204,11 @@
           "type": "boolean",
           "default": true,
           "description": "Show timestamps by default"
+        },
+        "debugConsolePlus.showLogSource": {
+          "type": "boolean",
+          "default": false,
+          "description": "Replace the timestamp column with the log source: APP (your code), FLUTTER (framework and tooling), PLATFORM (native Android/iOS logs) or DEBUGGER (debug adapter messages)"
         },
         "debugConsolePlus.autoHideTimestampsWidth": {
           "type": "number",

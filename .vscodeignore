@@ -11,3 +11,4 @@ node_modules/**
 .env
 recording.gif
 copy_from_here.png
+test/**

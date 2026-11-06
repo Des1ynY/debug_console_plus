@@ -15,10 +15,11 @@ A better debug console for VS Code / forks. Filter, search, and let AI query you
 - **Search** — search or filter logs by text or regex, combine with AND/OR logic
 - **Save / load logs** — export or restore sessions from the **…** (more) menu in the view title bar
 - **Timestamps** — show/hide, auto-hides on narrow panels
+- **Log source** — replace the timestamp column with where each line came from: `APP` (your code: `print`, `dart:developer` `log`), `FLUTTER` (framework errors and tooling), `PLATFORM` (native Android/iOS logs) or `DEBUGGER` (debug adapter messages). Toggle from the **…** menu or the `debugConsolePlus.showLogSource` setting
 - **Compact** — strip timestamps, Android logcat tags, and box-drawing for clean output (experimental)
 - **Auto-scroll** — follows new logs, pauses when you scroll up
 - **Copy & clipboard**
-  - **Copy All Logs** (Command Palette or the copy icon in the view title bar) — copies every line that currently passes your level and search filters (not the unfiltered session). Each line is timestamp (unless timestamps are hidden), level, and the stored message text.
+  - **Copy All Logs** (Command Palette or the copy icon in the view title bar) — copies every line that currently passes your level and search filters (not the unfiltered session). Each line is timestamp (unless timestamps are hidden) level, and the stored message text; with log source enabled, the source replaces both timestamp and level.
   - **Copy up to here** / **Copy from here** — right-click any log line in the list. **Copy up to here** copies from the first filtered line through the line you clicked (inclusive). **Copy from here** copies from that line through the last filtered line (inclusive). Hovered ranges highlight so you can see what will be copied. Same filters and clipboard formatting as **Copy All Logs** (note: **Compact** only changes how lines are drawn in the view, not what gets copied).
 
 

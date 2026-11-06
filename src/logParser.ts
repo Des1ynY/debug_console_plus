@@ -1,4 +1,4 @@
-import { DapOutputGroup, LogLevel, ParsedLog } from './types';
+import { DapOutputGroup, LogLevel, LogSource, ParsedLog } from './types';
 
 // Flutter prefix pattern: "flutter: " at the start of the message
 const FLUTTER_PREFIX_REGEX = /^flutter:\s*/gm;
@@ -161,13 +161,15 @@ function mapDapCategory(category: string): LogLevel {
 /**
  * Parses a DAP output event into a ParsedLog.
  * @param group - DAP output event body.group; used so tracker can inherit level for group boundaries.
+ * @param source - Origin of the output, classified from the raw (uncleaned) output.
  */
 export function parseLogEntry(
   output: string,
   category: string,
   sessionId: string,
   timestamp: number = Date.now(),
-  group?: DapOutputGroup
+  group?: DapOutputGroup,
+  source?: LogSource
 ): ParsedLog {
   // Clean message FIRST so level detection works on the normalized content
   // (without flutter:/logcat prefixes that break anchored regex patterns)
@@ -175,19 +177,7 @@ export function parseLogEntry(
   const level = detectLevelFromContent(cleanedMessage, category);
   const id = `${sessionId}-${timestamp}-${Math.random().toString(36).substr(2, 9)}`;
 
-  // Skip empty messages after cleaning
-  if (!cleanedMessage) {
-    return {
-      id,
-      timestamp,
-      level,
-      message: '',
-      category,
-      sessionId,
-      group,
-    };
-  }
-
+  // Empty messages (after cleaning) are skipped by the tracker
   return {
     id,
     timestamp,
@@ -195,6 +185,7 @@ export function parseLogEntry(
     message: cleanedMessage,
     category,
     sessionId,
+    source,
     group,
   };
 }

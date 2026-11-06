@@ -43,8 +43,9 @@ export class DebugConsolePlusViewProvider implements vscode.WebviewViewProvider 
       (e) => {
         if (e.affectsConfiguration('debugConsolePlus')) {
           const config = vscode.workspace.getConfiguration('debugConsolePlus');
-          const showTs = config.get<boolean>('showTimestamps', true);
-          if (this.timestampMode !== 'relative') {
+          // Only react to showTimestamps itself, so changing other settings keeps the toggled mode
+          if (e.affectsConfiguration('debugConsolePlus.showTimestamps') && this.timestampMode !== 'relative') {
+            const showTs = config.get<boolean>('showTimestamps', true);
             this.timestampMode = showTs ? 'absolute' : 'hidden';
             this.persistTimestampMode();
           }
@@ -224,6 +225,7 @@ export class DebugConsolePlusViewProvider implements vscode.WebviewViewProvider 
         config: {
           timestampMode: this.timestampMode,
           autoHideTimestampsWidth: this.autoHideTimestampsWidth,
+          showLogSource: config.get<boolean>('showLogSource', false),
           defaultLevels: defaultLevels,
         },
       } as WebviewMessage);
@@ -243,6 +245,12 @@ export class DebugConsolePlusViewProvider implements vscode.WebviewViewProvider 
     this.cycleTimestampMode();
     this.persistTimestampMode();
     this.sendConfig();
+  }
+
+  public toggleLogSource() {
+    const config = vscode.workspace.getConfiguration('debugConsolePlus');
+    // Webview picks the change up through onDidChangeConfiguration -> sendConfig
+    void config.update('showLogSource', !config.get<boolean>('showLogSource', false), vscode.ConfigurationTarget.Global);
   }
 
   public toggleCompact() {
