@@ -53,6 +53,8 @@
   const BRACKET_TIMESTAMP_REGEX = /\[\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?\]\s*/g;
   // Box-drawing characters used by logger packages (e.g. │├└┌┐┘─║╔╗╚╝ etc.)
   const BOX_DRAWING_REGEX = /[│├└┌┐┘┴┬┼─║╔╗╚╝╠╣╦╩╬]+\s*/g;
+  // Level tag at the start of the message: [info] / [DEBUG] / [warn] / [warning] / [error] (indentation kept)
+  const LEVEL_TAG_PREFIX_REGEX = /^(\s*)\[(?:debug|info|warn|warning|error)\]\s*/i;
   const TAG_REGEX = /\[([A-Za-z][\w. =-]*)\]/g;
   const SOURCE_LABELS = { app: 'APP', flutter: 'FLUTTER', platform: 'PLATFORM', debugger: 'DEBUGGER' };
 
@@ -495,7 +497,11 @@
 
   function compactMessage(message) {
     if (!compactMessages) return message;
-    return message.replace(COMPACT_PREFIX_REGEX, '').replace(BRACKET_TIMESTAMP_REGEX, '').replace(BOX_DRAWING_REGEX, '');
+    return message
+      .replace(COMPACT_PREFIX_REGEX, '')
+      .replace(BRACKET_TIMESTAMP_REGEX, '')
+      .replace(BOX_DRAWING_REGEX, '')
+      .replace(LEVEL_TAG_PREFIX_REGEX, '$1');
   }
 
   function updateSearchRegex() {

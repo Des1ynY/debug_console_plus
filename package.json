@@ -106,7 +106,7 @@
       },
       {
         "command": "debugConsolePlus.toggleCompact",
-        "title": "Compact (strip timestamps, logcat tags, box-drawing)",
+        "title": "Compact (strip timestamps, level tags, logcat tags, box-drawing)",
         "icon": "$(fold)",
         "category": "Debug Console+"
       },

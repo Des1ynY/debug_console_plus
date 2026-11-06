@@ -19,7 +19,7 @@ A better debug console for VS Code / forks. Filter, search, and let AI query you
   - **Log source** — where each line came from: `APP` (your code: `print`, `dart:developer` `log`), `FLUTTER` (framework errors and tooling), `PLATFORM` (native Android/iOS logs) or `DEBUGGER` (debug adapter messages). **Toggle Log Source** in the view title bar or `debugConsolePlus.showLogSource`
   - **Log level** — **Toggle Log Level** in the view title bar or `debugConsolePlus.showLogLevel`
 - **Title bar actions** — every action is its own title bar icon; right-click the title bar to hide the ones you don't use
-- **Compact** — strip timestamps, Android logcat tags, and box-drawing for clean output (experimental)
+- **Compact** — strip timestamps, Android logcat tags, leading `[info]` / `[debug]` / `[warn]` / `[error]` tags, and box-drawing for clean output (experimental)
 - **Auto-scroll** — follows new logs, pauses when you scroll up
 - **Copy & clipboard**
   - **Copy All Logs** (Command Palette or the copy icon in the view title bar) — copies every line that currently passes your level and search filters (not the unfiltered session). Each line is the enabled columns (timestamp, source, level) followed by the stored message text.
