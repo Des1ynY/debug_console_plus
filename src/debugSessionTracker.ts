@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { promises as fsp } from 'fs';
 import { DapOutputGroup, LogSource, LogsUpdate, ParsedLog } from './types';
-import { parseLogEntry } from './logParser';
+import { cleanMessage, parseLogEntry } from './logParser';
 import { getSessionProfile, LogSourceClassifier } from './logSource';
 
 export class DebugSessionTracker implements vscode.Disposable {
@@ -77,9 +77,14 @@ export class DebugSessionTracker implements vscode.Disposable {
    * Handle output from DAP - called by the tracker.
    * @param group - DAP output body.group; group boundaries inherit level from the content line in the group.
    * @param source - Origin of the output, classified by the session's DebugAdapterTracker.
+   * @param continuationIndent - Set when the output continues the previous log entry: width of the padding to strip.
    */
-  public handleOutput(output: string, category: string, sessionId: string, group?: DapOutputGroup, source?: LogSource) {
+  public handleOutput(output: string, category: string, sessionId: string, group?: DapOutputGroup, source?: LogSource, continuationIndent?: number) {
     if (!output || output.trim().length === 0) {
+      return;
+    }
+
+    if (continuationIndent !== undefined && this.appendToLastLog(output, sessionId, continuationIndent)) {
       return;
     }
 
@@ -134,6 +139,26 @@ export class DebugSessionTracker implements vscode.Disposable {
 
     // Persist to file (debounced)
     this.scheduleFileWrite();
+  }
+
+  /**
+   * Add a line to the last log entry. Returns false if that entry belongs to another session
+   * (or was cleared), in which case the line has to become an entry of its own.
+   */
+  private appendToLastLog(output: string, sessionId: string, indent: number): boolean {
+    const last = this.logs[this.logs.length - 1];
+    if (!last || last.sessionId !== sessionId) {
+      return false;
+    }
+
+    last.message += `\n${cleanMessage(output).slice(indent)}`;
+
+    if (this.onLogCallback) {
+      this.onLogCallback({ type: 'updateLast', log: last });
+    }
+
+    this.scheduleFileWrite();
+    return true;
   }
 
   /**
@@ -264,8 +289,8 @@ class DebugAdapterTracker implements vscode.DebugAdapterTracker {
       if (body && body.output) {
         const category = body.category || 'console';
         const group = body.group; // 'start' | 'startCollapsed' | 'end' for grouped output (e.g. box borders)
-        const source = this.sourceClassifier.classify(body.output, category);
-        this.tracker.handleOutput(body.output, category, this.session.id, group, source);
+        const { source, continuationIndent } = this.sourceClassifier.classify(body.output, category);
+        this.tracker.handleOutput(body.output, category, this.session.id, group, source, continuationIndent);
       }
     }
   }

@@ -21,10 +21,10 @@ export interface ParsedLog {
 
 export type TimestampMode = 'absolute' | 'relative' | 'hidden';
 
-export type LogsUpdate = { type: 'full'; logs: ParsedLog[] } | { type: 'append'; log: ParsedLog };
+export type LogsUpdate = { type: 'full'; logs: ParsedLog[] } | { type: 'append'; log: ParsedLog } | { type: 'updateLast'; log: ParsedLog };
 
 export interface WebviewMessage {
-  type: 'logs' | 'newLog' | 'clear' | 'config' | 'setFilter' | 'copyAll' | 'toggleCompact' | 'toggleTags' | 'packageInfo' | 'focusFilter';
+  type: 'logs' | 'newLog' | 'updateLastLog' | 'clear' | 'config' | 'setFilter' | 'copyAll' | 'toggleCompact' | 'toggleTags' | 'packageInfo' | 'focusFilter';
   logs?: ParsedLog[];
   log?: ParsedLog & { formattedTimestamp?: string };
   config?: {

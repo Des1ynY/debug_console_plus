@@ -17,7 +17,7 @@ const ANSI_LITERAL_REGEX = /\[\d+(?:;\d+)*m/g;
  * Cleans up log message by removing platform prefixes and escape codes
  * Preserves indentation and structure
  */
-function cleanMessage(message: string): string {
+export function cleanMessage(message: string): string {
   let cleaned = message;
 
   // Remove Flutter prefix: "flutter: " at the start

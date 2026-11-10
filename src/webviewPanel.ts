@@ -133,6 +133,17 @@ export class DebugConsolePlusViewProvider implements vscode.WebviewViewProvider 
           })),
         } as WebviewMessage);
       }
+    } else if (update.type === 'updateLast') {
+      this.currentLogs = [...this.currentLogs.slice(0, -1), update.log];
+      if (this._view) {
+        this._view.webview.postMessage({
+          type: 'updateLastLog',
+          log: {
+            ...update.log,
+            formattedTimestamp: formatTimestamp(update.log.timestamp),
+          },
+        } as WebviewMessage);
+      }
     } else {
       this.currentLogs = [...this.currentLogs, update.log];
       if (this._view) {

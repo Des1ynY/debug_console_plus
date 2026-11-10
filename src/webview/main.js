@@ -349,6 +349,17 @@
           applyFiltersIncremental(allLogs.length - 1);
         }
         break;
+      case 'updateLastLog':
+        if (message.log) {
+          allLogs[allLogs.length - 1] = message.log;
+          // Re-run the last entry through the filters: it is taller now and may match the search only now
+          if (filteredLogs.length > 0 && filteredLogs[filteredLogs.length - 1].id === message.log.id) {
+            filteredLogs.pop();
+          }
+          itemHeights.delete(message.log.id);
+          applyFiltersIncremental(allLogs.length - 1);
+        }
+        break;
       case 'clear':
         allLogs = [];
         filteredLogs = [];

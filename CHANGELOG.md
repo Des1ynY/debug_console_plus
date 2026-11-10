@@ -9,6 +9,10 @@ All notable changes to this project are documented in this file.
 - **Copy log** in the log line right-click menu copies just that line, in the same format as **Copy All Logs**.
 - **Copy JSON** / **Copy HTML** in the same menu appear when a log line contains a JSON or HTML body, and copy only that body.
 
+### Fixed
+
+- Multi-line `dart:developer` logs (HTML bodies, stack traces) are now a single log entry with the source and level of their first line. Their later lines used to become separate `PLATFORM` entries that the source filter hid.
+
 ## [0.0.11] - 2026-11-06
 
 ### Added

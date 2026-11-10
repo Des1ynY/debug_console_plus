@@ -9,6 +9,12 @@ import { LogSource } from './types';
  */
 export type SessionProfile = 'flutter' | 'dart' | 'generic';
 
+export interface LogClassification {
+  source: LogSource;
+  /** Set when the output continues the previous log entry: width of the padding to strip from it. */
+  continuationIndent?: number;
+}
+
 // Dart-Code's internal DebuggerType enum: Flutter = 2, FlutterTest = 3
 const DART_CODE_FLUTTER_DEBUGGER_TYPES = [2, 3];
 
@@ -79,7 +85,7 @@ export function getSessionProfile(session: vscode.DebugSession): SessionProfile 
 
 function firstLine(output: string): string {
   const stripped = output.replace(ANSI_ESCAPE_REGEX, '');
-  return stripped.split(/\r?\n/).find((line) => line.trim().length > 0)?.trim() ?? '';
+  return stripped.split(/\r?\n/).find((line) => line.trim().length > 0) ?? '';
 }
 
 /**
@@ -89,12 +95,28 @@ function firstLine(output: string): string {
 export class LogSourceClassifier {
   private inFlutterErrorBlock = false;
   private appLaunched = false;
+  // Indentation of the lines following the last dart:developer log() header, null outside of one
+  private developerLogIndent: string | null = null;
 
   constructor(private readonly profile: SessionProfile) {}
 
-  public classify(output: string, category: string): LogSource {
-    const line = firstLine(output);
+  public classify(output: string, category: string): LogClassification {
+    const rawLine = firstLine(output);
+    const line = rawLine.trim();
 
+    // The DAP sends multi-line log() messages line by line, padding the lines after the first
+    // to the width of the "[loggerName] " prefix (HTML bodies, stack traces, ...)
+    if (category === 'console' && this.developerLogIndent !== null && (!line || rawLine.startsWith(this.developerLogIndent))) {
+      return { source: 'app', continuationIndent: this.developerLogIndent.length };
+    }
+
+    const source = this.classifyByProfile(line, category);
+    const developerLogPrefix = category === 'console' && source === 'app' ? line.match(DEVELOPER_LOG_PREFIX_REGEX) : null;
+    this.developerLogIndent = developerLogPrefix ? ' '.repeat(developerLogPrefix[0].length) : null;
+    return { source };
+  }
+
+  private classifyByProfile(line: string, category: string): LogSource {
     switch (this.profile) {
       case 'flutter':
         return this.classifyFlutter(line, category);
