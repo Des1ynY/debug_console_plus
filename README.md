@@ -25,7 +25,8 @@ A better debug console for VS Code / forks. Filter, search, and let AI query you
 - **Auto-scroll** — follows new logs, pauses when you scroll up
 - **Copy & clipboard**
   - **Copy All Logs** (Command Palette or the copy icon in the view title bar) — copies every line that currently passes your level and search filters (not the unfiltered session). Each line is the enabled columns (timestamp, source, level) followed by the stored message text.
-  - **Copy up to here** / **Copy from here** — right-click any log line in the list. **Copy up to here** copies from the first filtered line through the line you clicked (inclusive). **Copy from here** copies from that line through the last filtered line (inclusive). Hovered ranges highlight so you can see what will be copied. Same filters and clipboard formatting as **Copy All Logs** (note: **Compact mode** only changes how lines are drawn in the view, not what gets copied).
+  - **Copy log** / **Copy up to here** / **Copy from here** — right-click any log line in the list. **Copy log** copies just the line you clicked. **Copy up to here** copies from the first filtered line through the line you clicked (inclusive). **Copy from here** copies from that line through the last filtered line (inclusive). Hovered ranges highlight so you can see what will be copied. Same filters and clipboard formatting as **Copy All Logs** (note: **Compact mode** only changes how lines are drawn in the view, not what gets copied).
+  - **Copy JSON** / **Copy HTML** — shown in the same menu when the line contains a JSON or HTML body. Copies only that body, without the columns or surrounding text. If a line has several bodies, the largest one is copied.
 
 
 ![Debug Console+ screenshot](copy_from_here.png)

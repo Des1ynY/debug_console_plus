@@ -1025,6 +1025,60 @@
     return segments;
   }
 
+  const HTML_TAG_REGEX = /<(\/?)([a-zA-Z][a-zA-Z0-9-]*)(?:\s(?:"[^"]*"|'[^']*'|[^<>"'])*)?\/?>/g;
+  // Only these can start an HTML area, so generics like List<String> or XML are not recognized.
+  const HTML_ROOT_TAGS = new Set([
+    'html', 'head', 'body', 'title', 'div', 'span', 'p', 'a', 'ul', 'ol', 'li', 'dl', 'table', 'thead', 'tbody', 'tfoot', 'tr', 'td', 'th',
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'form', 'button', 'label', 'select', 'option', 'textarea', 'section', 'article', 'nav', 'header',
+    'footer', 'main', 'aside', 'pre', 'code', 'blockquote', 'script', 'style', 'svg', 'b', 'i', 'u', 'em', 'strong', 'small', 'center', 'font'
+  ]);
+
+  function isSelfClosingTag(tag) {
+    return tag[0].endsWith('/>');
+  }
+
+  // Find the tag closing tags[openIndex], counting only tags with the same name:
+  // real-world HTML leaves <p>, <li> and the like unclosed.
+  function findHtmlClosingTag(tags, openIndex) {
+    const name = tags[openIndex][2].toLowerCase();
+    let depth = 1;
+    for (let i = openIndex + 1; i < tags.length; i++) {
+      if (tags[i][2].toLowerCase() !== name || isSelfClosingTag(tags[i])) continue;
+      depth += tags[i][1] ? -1 : 1;
+      if (depth === 0) return i;
+    }
+    return -1;
+  }
+
+  // Returns the text from the first to the last balanced HTML element in raw text, or null.
+  function findHtmlArea(raw) {
+    const tags = Array.from(raw.matchAll(HTML_TAG_REGEX));
+    let start = -1;
+    let end = -1;
+    for (let i = 0; i < tags.length; i++) {
+      if (tags[i][1] || isSelfClosingTag(tags[i]) || !HTML_ROOT_TAGS.has(tags[i][2].toLowerCase())) continue;
+      const closeIndex = findHtmlClosingTag(tags, i);
+      if (closeIndex === -1) continue;
+      if (start === -1) start = tags[i].index;
+      end = tags[closeIndex].index + tags[closeIndex][0].length;
+      i = closeIndex;
+    }
+    if (start === -1) return null;
+    const doctype = raw.slice(0, start).match(/<!doctype\s+html[^>]*>\s*$/i);
+    return raw.slice(doctype ? doctype.index : start, end);
+  }
+
+  // Returns the largest JSON or HTML area of a message as { type, content }, or null.
+  // The largest one wins so that HTML inside a JSON string (or JSON inside HTML) counts as its container.
+  function findCopyableArea(message) {
+    const areas = splitJsonSegments(message)
+      .filter(seg => seg.type === 'json')
+      .map(seg => ({ type: 'JSON', content: seg.content }));
+    const html = findHtmlArea(message);
+    if (html) areas.push({ type: 'HTML', content: html });
+    return areas.reduce((largest, area) => (!largest || area.content.length > largest.content.length ? area : largest), null);
+  }
+
   function processTextSegment(text) {
     let html = highlightSearchMatches(text);
     html = applyTagHighlighting(html);
@@ -1206,6 +1260,25 @@
     const menu = document.createElement('div');
     menu.className = 'context-menu';
     menu.id = 'contextMenu';
+
+    const copyLog = document.createElement('button');
+    copyLog.className = 'context-menu-item';
+    copyLog.textContent = 'Copy log';
+    copyLog.onmouseenter = () => highlightLogRange(index, index);
+    copyLog.onmouseleave = clearLogHighlights;
+    copyLog.onclick = () => { copyLogsRange(index, index); hideContextMenu(); };
+    menu.appendChild(copyLog);
+
+    const area = findCopyableArea(log.message);
+    if (area) {
+      const copyArea = document.createElement('button');
+      copyArea.className = 'context-menu-item';
+      copyArea.textContent = `Copy ${area.type}`;
+      copyArea.onmouseenter = () => highlightLogRange(index, index);
+      copyArea.onmouseleave = clearLogHighlights;
+      copyArea.onclick = () => { navigator.clipboard.writeText(area.content); hideContextMenu(); };
+      menu.appendChild(copyArea);
+    }
 
     const copyUp = document.createElement('button');
     copyUp.className = 'context-menu-item';
