@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.0.13] - 2026-11-17
+
+### Added
+
+- A **↓** button in the bottom-right corner of the log view appears when you scroll up. Clicking it jumps to the latest logs and resumes auto-scroll.
+
+### Fixed
+
+- Long one-line JSON bodies now fill each line to the full width. They used to wrap only at spaces and hyphens inside values, which left ragged lines.
+
 ## [0.0.12] - 2026-11-10
 
 ### Added
