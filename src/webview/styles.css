@@ -403,6 +403,8 @@ body {
 .json-bracket.json-depth-3 { color: var(--vscode-editorBracketHighlight-foreground4, #ffd700); }
 .json-bracket.json-depth-4 { color: var(--vscode-editorBracketHighlight-foreground5, #da70d6); }
 .json-bracket.json-depth-5 { color: var(--vscode-editorBracketHighlight-foreground6, #179fff); }
+/* JSON has few natural break points, so wrap at any character to fill each line */
+.json-block { word-break: break-all; }
 .json-key { color: var(--vscode-debugTokenExpression-name, #9cdcfe); }
 .json-string { color: var(--vscode-debugTokenExpression-string, #ce9178); }
 .json-number { color: var(--vscode-debugTokenExpression-number, #b5cea8); }

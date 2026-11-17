@@ -1104,7 +1104,7 @@
     let html = '';
     for (const seg of segments) {
       if (seg.type === 'json') {
-        html += renderJsonValue(seg.parsed, 0);
+        html += `<span class="json-block">${renderJsonValue(seg.parsed, 0)}</span>`;
       } else {
         html += processTextSegment(seg.content);
       }
