@@ -571,6 +571,7 @@ export class DebugConsolePlusViewProvider implements vscode.WebviewViewProvider 
 					<div class="source-filters" id="sourceFilters"></div>
 				</div>
 				<div class="logs-container" id="logsContainer"></div>
+				<button type="button" class="scroll-to-bottom-btn" id="scrollToBottomBtn" title="Scroll to latest logs" hidden>&#x2193;</button>
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`;

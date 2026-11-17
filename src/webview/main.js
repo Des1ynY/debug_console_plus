@@ -82,6 +82,7 @@
   const searchNavCount = document.getElementById('searchNavCount');
   const searchPrev = document.getElementById('searchPrev');
   const searchNext = document.getElementById('searchNext');
+  const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
 
   let scrollContent = null;
   let visibleContent = null;
@@ -142,6 +143,10 @@
     }
 
     logsContainer.addEventListener('scroll', handleScroll);
+    scrollToBottomBtn.addEventListener('click', () => {
+      shouldAutoScroll = true;
+      scrollToBottom();
+    });
 
     const resizeObserver = new ResizeObserver((entries) => {
       const rect = entries[0].contentRect;
@@ -290,7 +295,13 @@
   function handleScroll() {
     scrollTop = logsContainer.scrollTop;
     shouldAutoScroll = logsContainer.scrollHeight - scrollTop <= containerHeight + 50;
+    updateScrollToBottomButton();
     scheduleRender();
+  }
+
+  function updateScrollToBottomButton() {
+    const atBottom = logsContainer.scrollHeight - logsContainer.scrollTop <= containerHeight + 50;
+    scrollToBottomBtn.hidden = atBottom;
   }
 
   function scheduleRender(force = false) {
@@ -308,6 +319,7 @@
       }
 
       renderVisibleLogs();
+      updateScrollToBottomButton();
     });
   }
 

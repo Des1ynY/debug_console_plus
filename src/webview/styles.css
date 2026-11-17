@@ -219,6 +219,35 @@ body {
   color: var(--vscode-input-placeholderForeground, #888);
 }
 
+/* Floating button that jumps to the latest logs, shown when scrolled up */
+.scroll-to-bottom-btn {
+  position: fixed;
+  right: 16px;
+  bottom: 12px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  font-size: 14px;
+  line-height: 24px;
+  cursor: pointer;
+  opacity: 0.8;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  z-index: 10;
+}
+
+.scroll-to-bottom-btn:hover {
+  opacity: 1;
+  background-color: var(--vscode-button-hoverBackground, var(--vscode-button-background));
+}
+
+.scroll-to-bottom-btn[hidden] {
+  display: none;
+}
+
 /* Logs container */
 .logs-container {
   flex: 1;
